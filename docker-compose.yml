@@ -1,0 +1,58 @@
+# To execute this docker-compose yml file use docker-compose -f <file_name> up
+# Add the "-d" flag at the end for deattached execution
+version: "3"
+services:
+  selenium-hub:
+    image: selenium/hub:3.13.0-argon
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+    networks:
+      qa_network:
+        ipv4_address: 172.18.0.2
+  chrome:
+    image: selenium/node-chrome:3.13.0-argon
+    container_name: chrome-node
+    ports:
+      - "5901:5900"
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    networks:
+      qa_network:
+        ipv4_address: 172.18.0.3
+  firefox:
+    image: selenium/node-firefox:3.13.0-argon
+    container_name: firefox-node
+    ports:
+      - "5902:5900"
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    networks:
+      qa_network:
+        ipv4_address: 172.18.0.4
+     
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports: 
+      - "8080:8080"
+    networks:
+      qa_network:
+        ipv4_address: 172.18.0.5   
+
+networks:
+    qa_network:
+#    driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.18.0.0/16
+ #               - gateway: 172.18.0.1
+
+        
