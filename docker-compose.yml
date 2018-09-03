@@ -1,6 +1,6 @@
 # To execute this docker-compose yml file use docker-compose -f <file_name> up
 # Add the "-d" flag at the end for deattached execution
-version: "3"
+version: "3.5"
 services:
   selenium-hub:
     image: selenium/hub:3.13.0-argon
@@ -40,19 +40,26 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
+    user: root
     ports: 
       - "8080:8080"
     networks:
       qa_network:
-        ipv4_address: 172.18.0.5   
-
+        ipv4_address: 172.18.0.5
+    volumes:
+      - type: bind
+        source: ./Shared_Folder/jenkins
+        target: /var/jenkins_home/jenkins_bakup
+ 
 networks:
     qa_network:
-#    driver: bridge
         ipam:
             driver: default
             config:
                 - subnet: 172.18.0.0/16
- #               - gateway: 172.18.0.1
 
-        
+ 
+
+
+
+ 
